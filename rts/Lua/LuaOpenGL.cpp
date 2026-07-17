@@ -20,6 +20,7 @@
 
 #include "LuaOpenGL.h"
 
+#include "LuaAssetAtlasModels.h"
 #include "LuaInclude.h"
 #include "LuaContextData.h"
 #include "LuaDisplayLists.h"
@@ -281,6 +282,7 @@ void LuaOpenGL::Free()
 bool LuaOpenGL::PushEntries(lua_State* L)
 {
 	LuaOpenGLUtils::ResetState();
+	LuaAssetAtlasModels::PushEntries(L);
 
 	REGISTER_LUA_CFUNC(HasExtension);
 	REGISTER_LUA_CFUNC(GetNumber);
