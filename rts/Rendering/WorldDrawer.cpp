@@ -312,6 +312,7 @@ void CWorldDrawer::Draw() const
 	camera->Update();
 
 	DrawOpaqueObjects();
+	eventHandler.DrawWorldPostUnit();
 	DrawAlphaObjects();
 	{
 		SCOPED_TIMER("Draw::World::DrawWorld");

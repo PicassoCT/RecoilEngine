@@ -314,6 +314,7 @@ bool LuaUnsyncedCtrl::PushEntries(lua_State* L)
 	REGISTER_LUA_CFUNC(ClearWatchDogTimer);
 	REGISTER_LUA_CFUNC(GarbageCollectCtrl);
 
+	REGISTER_LUA_CFUNC(PreloadModel);
 	REGISTER_LUA_CFUNC(PreloadUnitDefModel);
 	REGISTER_LUA_CFUNC(PreloadFeatureDefModel);
 	REGISTER_LUA_CFUNC(PreloadSoundItem);
@@ -4847,6 +4848,21 @@ int LuaUnsyncedCtrl::PreloadUnitDefModel(lua_State* L) {
 		return 0;
 
 	ud->PreloadModel();
+	return 0;
+}
+
+
+/*** Schedule loading a shared model asset without a unit or feature definition.
+ * CPU parsing can run asynchronously; first draw may still upload or wait.
+ * Assets remain in the engine model cache for the game lifetime.
+ * @function Spring.PreloadModel
+ * @param modelName string VFS model path (including extension)
+ */
+int LuaUnsyncedCtrl::PreloadModel(lua_State* L)
+{
+	const char* modelName = luaL_checkstring(L, 1);
+	luaL_argcheck(L, modelName[0] != '\0', 1, "model path must not be empty");
+	modelLoader.PreloadModel(modelName);
 	return 0;
 }
 

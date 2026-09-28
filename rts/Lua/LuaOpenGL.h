@@ -1,7 +1,6 @@
 /* This file is part of the Spring engine (GPL v2 or later), see LICENSE.html */
 
-#ifndef LUA_GL_H
-#define LUA_GL_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -62,6 +61,10 @@ class LuaOpenGL {
 		static void EnableDrawWorldPreUnit();
 		static void ResetDrawWorldPreUnit();
 		static void DisableDrawWorldPreUnit();
+
+		static void EnableDrawWorldPostUnit();
+		static void ResetDrawWorldPostUnit();
+		static void DisableDrawWorldPostUnit();
 
 		NOOP_STATE_FUNCS(DrawPreDecals)
 		NOOP_STATE_FUNCS(DrawWorldPreParticles)
@@ -276,6 +279,8 @@ class LuaOpenGL {
 		static int Unit(lua_State* L);
 		static int UnitRaw(lua_State* L);
 		static int UnitTextures(lua_State* L);
+		static int ModelShape(lua_State* L);
+		static int ModelShapeTextures(lua_State* L);
 		static int UnitShape(lua_State* L);
 		static int UnitShapeTextures(lua_State* L);
 		static int UnitMultMatrix(lua_State* L);
@@ -372,5 +377,3 @@ inline void LuaOpenGL::CheckMatrixState(lua_State* L, const char* fn, int error)
 		return;
 	GetLuaContextData(L)->glMatrixTracker.HandleMatrixStateError(error, fn);
 }
-
-#endif /* LUA_UNITDEFS_H */

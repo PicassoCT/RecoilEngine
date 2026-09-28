@@ -2760,6 +2760,12 @@ DRAW_CALLIN(DrawWorld)
  */
 DRAW_CALLIN(DrawWorldPreUnit)
 
+/*** Draw after opaque world objects and before water and other alpha objects.
+ * Suitable for depth-masked model interiors. Main world pass only.
+ * @function Callins:DrawWorldPostUnit
+ */
+DRAW_CALLIN(DrawWorldPostUnit)
+
 /*** Called before decals are drawn
  *
  * @function Callins:DrawPreDecals

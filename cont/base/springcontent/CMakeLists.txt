@@ -12,6 +12,10 @@ foreach(ITEM ${GLSL_SHADERS})
 endforeach()
 
 list(APPEND FILES
+	LuaModelWindows/ModelWindows.lua
+	LuaModelWindows/Scene.lua
+	LuaModelWindows/Surface.lua
+	LuaModelWindows/Renderer.lua
 	unittextures/tatex/PALETTE.PAL
 	unittextures/tree_fir_tall_5_1.dds
 	unittextures/tree_fir_tall_5_2.dds

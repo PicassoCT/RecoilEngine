@@ -1902,6 +1902,12 @@ function gadgetHandler:DrawWorld()
   end
 end
 
+function gadgetHandler:DrawWorldPostUnit()
+  for _,g in r_ipairs(self.DrawWorldPostUnitList) do
+    g:DrawWorldPostUnit()
+  end
+end
+
 function gadgetHandler:DrawWorldPreUnit()
   for _,g in r_ipairs(self.DrawWorldPreUnitList) do
     g:DrawWorldPreUnit()

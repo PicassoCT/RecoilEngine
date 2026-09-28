@@ -1,7 +1,6 @@
 /* This file is part of the Spring engine (GPL v2 or later), see LICENSE.html */
 
-#ifndef EVENT_HANDLER_H
-#define EVENT_HANDLER_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -278,6 +277,7 @@ class CEventHandler
 		void DrawGenesis();
 		void DrawWorld();
 		void DrawWorldPreUnit();
+		void DrawWorldPostUnit();
 		void DrawPreDecals();
 		void DrawWorldPreParticles(bool drawAboveWater, bool drawBelowWater, bool drawReflection, bool drawRefraction);
 		void DrawWaterPost();
@@ -795,5 +795,3 @@ inline void CEventHandler::RenderProjectileDestroyed(const CProjectile* proj)
 #undef UNIT_CALLIN_NO_PARAM
 #undef UNIT_CALLIN_INT_PARAMS
 #undef UNIT_CALLIN_LOS_PARAM
-
-#endif /* EVENT_HANDLER_H */

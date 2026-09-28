@@ -1,7 +1,6 @@
 /* This file is part of the Spring engine (GPL v2 or later), see LICENSE.html */
 
-#ifndef EVENT_CLIENT_H
-#define EVENT_CLIENT_H
+#pragma once
 
 #include <algorithm>
 #include <map>
@@ -341,6 +340,7 @@ class CEventClient
 		virtual void DrawGenesis() {}
 		virtual void DrawWorld() {}
 		virtual void DrawWorldPreUnit() {}
+		virtual void DrawWorldPostUnit() {}
 		virtual void DrawPreDecals() {}
 		virtual void DrawWorldPreParticles(bool drawAboveWater, bool drawBelowWater, bool drawReflection, bool drawRefraction) {}
 		virtual void DrawWaterPost() {}
@@ -389,6 +389,3 @@ class CEventClient
 		virtual void MetalMapChanged(const int x, const int z) {}
 		/// @}
 };
-
-
-#endif /* EVENT_CLIENT_H */

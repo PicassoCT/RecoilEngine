@@ -51,6 +51,8 @@
 #include "Rendering/Features/FeatureDrawer.h"
 #include "Rendering/UnitDefImage.h"
 #include "Rendering/Common/ModelDrawerHelpers.h"
+#include "Rendering/Models/IModelParser.h"
+#include "Rendering/Models/3DModel.hpp"
 #include "Rendering/Units/UnitDrawer.h"
 #include "Rendering/Env/ISky.h"
 #include "Rendering/Env/SunLighting.h"
@@ -397,6 +399,8 @@ bool LuaOpenGL::PushEntries(lua_State* L)
 	REGISTER_LUA_CFUNC(Unit);
 	REGISTER_LUA_CFUNC(UnitRaw);
 	REGISTER_LUA_CFUNC(UnitTextures);
+	REGISTER_LUA_CFUNC(ModelShape);
+	REGISTER_LUA_CFUNC(ModelShapeTextures);
 	REGISTER_LUA_CFUNC(UnitShape);
 	REGISTER_LUA_CFUNC(UnitShapeTextures);
 	REGISTER_LUA_CFUNC(UnitMultMatrix);
@@ -690,8 +694,12 @@ void LuaOpenGL::ResetDrawWorld()
 
 /******************************************************************************/
 //
-//  WorldPreUnit -- the same as World
+//  WorldPreUnit / WorldPostUnit -- the same state as World
 //
+
+void LuaOpenGL::EnableDrawWorldPostUnit() { EnableDrawWorld(); }
+void LuaOpenGL::ResetDrawWorldPostUnit() { ResetDrawWorld(); }
+void LuaOpenGL::DisableDrawWorldPostUnit() { DisableDrawWorld(); }
 
 void LuaOpenGL::EnableDrawWorldPreUnit()
 {
@@ -1611,6 +1619,47 @@ static void GLObjectShapeTextures(lua_State* L, const SolidObjectDef* def)
 	}
 }
 
+
+/*** Draw a shared model asset in its bind pose, with the current transform and shader.
+ * Does not create a unit/feature, bind textures, or change materials.
+ * Prefer Spring.PreloadModel before first use to schedule CPU loading.
+ * @function gl.ModelShape
+ * @param modelName string VFS model path (including extension)
+ */
+int LuaOpenGL::ModelShape(lua_State* L)
+{
+	CheckDrawingEnabled(L, __func__);
+	const S3DModel* model = modelLoader.LoadModel(luaL_checkstring(L, 1));
+	if (model != nullptr) {
+		// DrawStatic uses legacy client arrays and the current VAO. Keep caller
+		// array pointers, enables and buffer bindings intact.
+		glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+		model->DrawStatic();
+		glPopClientAttrib();
+	}
+	return 0;
+}
+
+/*** Push or pop texture/model-format state for gl.ModelShape.
+ * Like gl.UnitShapeTextures, this does not restore the previous texture bindings.
+ * @function gl.ModelShapeTextures
+ * @param modelName string VFS model path
+ * @param push boolean Bind on true, pop model-format state on false
+ */
+int LuaOpenGL::ModelShapeTextures(lua_State* L)
+{
+	CheckDrawingEnabled(L, __func__);
+	const char* modelName = luaL_checkstring(L, 1);
+	const bool push = luaL_checkboolean(L, 2);
+	const S3DModel* model = modelLoader.LoadModel(modelName);
+	if (model == nullptr)
+		return 0;
+	if (push)
+		CModelDrawerHelper::PushModelRenderState(model);
+	else
+		CModelDrawerHelper::PopModelRenderState(model);
+	return 0;
+}
 
 int LuaOpenGL::UnitCommon(lua_State* L, bool applyTransform, bool callDrawUnit)
 {

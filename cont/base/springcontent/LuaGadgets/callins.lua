@@ -138,6 +138,7 @@ CALLIN_LIST = {
 	"DrawGenesis",
 	"DrawWorld",
 	"DrawWorldPreUnit",
+	"DrawWorldPostUnit",
 	"DrawOpaqueUnitsLua",
 	"DrawOpaqueFeaturesLua",
 	"DrawAlphaUnitsLua",

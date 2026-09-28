@@ -1,7 +1,6 @@
 /* This file is part of the Spring engine (GPL v2 or later), see LICENSE.html */
 
-#ifndef LUA_HANDLE_H
-#define LUA_HANDLE_H
+#pragma once
 #include <cinttypes>
 
 #include "System/EventClient.h"
@@ -256,6 +255,7 @@ class CLuaHandle : public CEventClient
 		void DrawGenesis() override;
 		void DrawWorld() override;
 		void DrawWorldPreUnit() override;
+		void DrawWorldPostUnit() override;
 		void DrawPreDecals() override;
 		void DrawWorldPreParticles(bool drawAboveWater, bool drawBelowWater, bool drawReflection, bool drawRefraction) override;
 		void DrawWaterPost() override;
@@ -438,6 +438,3 @@ inline bool CLuaHandle::RunCallInLUS(lua_State* L, std::string* ts, int inArgs, 
 
 /******************************************************************************/
 /******************************************************************************/
-
-
-#endif /* LUA_HANDLE_H */
