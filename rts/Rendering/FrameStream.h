@@ -3,6 +3,7 @@
 #ifndef FRAME_STREAM_H
 #define FRAME_STREAM_H
 
+#include <atomic>
 #include <condition_variable>
 #include <cstdint>
 #include <mutex>
@@ -60,7 +61,7 @@ private:
 	std::uint32_t pendingFrameId = 0;
 	bool framePending = false;
 	bool stopWorker = false;
-	bool active = false;
+	std::atomic_bool active {false};
 
 	int outputWidth = 640;
 	int outputHeight = 360;
