@@ -1,6 +1,7 @@
 /* This file is part of the Spring engine (GPL v2 or later), see LICENSE.html */
 
 #include "Rendering/GL/myGL.h"
+#include "Rendering/FrameStream.h"
 
 #include <Rml/Backends/RmlUi_Backend.h>
 #include <RmlUi/Core.h>
@@ -1555,6 +1556,9 @@ bool CGame::Draw() {
 		// does nothing unless StartCapturing has also been called via /createvideo (Windows-only)
 		videoCapturing->RenderFrame();
 	}
+
+	// Generic unsynced framebuffer stream (inactive unless explicitly started from LuaUI).
+	CFrameStream::GetInstance().RenderFrame();
 
 	SetDrawMode(gameNotDrawing);
 	CTeamHighlight::Disable();
