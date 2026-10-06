@@ -99,7 +99,7 @@ bool CFrameStream::Start(const std::string& host, std::uint16_t port, int width,
 
 	try {
 		asio::error_code ec;
-		const auto address = asio::ip::make_address(host, ec);
+		const auto address = asio::ip::address::from_string(host, ec);
 		if (ec) {
 			LOG_L(L_ERROR, "[FrameStream] invalid target address %s: %s", host.c_str(), ec.message().c_str());
 			return false;
