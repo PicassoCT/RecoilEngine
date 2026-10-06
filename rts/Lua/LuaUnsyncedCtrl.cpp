@@ -48,6 +48,7 @@
 #include "Net/Protocol/NetProtocol.h"
 #include "Net/GameServer.h"
 #include "Rendering/Env/ISky.h"
+#include "Rendering/FrameStream.h"
 #include "Rendering/Env/SunLighting.h"
 #include "Rendering/Env/WaterRendering.h"
 #include "Rendering/Env/MapRendering.h"
@@ -196,6 +197,9 @@ bool LuaUnsyncedCtrl::PushEntries(lua_State* L)
 	REGISTER_LUA_CFUNC(SetEngineBuildSquareRendering);
 	REGISTER_LUA_CFUNC(SetVideoCapturingMode);
 	REGISTER_LUA_CFUNC(SetVideoCapturingTimeOffset);
+	REGISTER_LUA_CFUNC(StartFrameStream);
+	REGISTER_LUA_CFUNC(StopFrameStream);
+	REGISTER_LUA_CFUNC(IsFrameStreamActive);
 
 	REGISTER_LUA_CFUNC(SetWaterParams);
 
@@ -4605,6 +4609,92 @@ int LuaUnsyncedCtrl::SetVideoCapturingTimeOffset(lua_State* L)
 {
 	videoCapturing->SetTimeOffset(luaL_checkfloat(L, 1));
 	return 0;
+}
+
+
+/*** Starts a low-latency framebuffer stream to a local-network UDP destination.
+ *
+ * The destination is restricted by the engine to loopback, RFC1918, or IPv4
+ * link-local addresses. Frames are QOI-encoded RGBA and split into MTU-sized
+ * UDP datagrams. This is an unsynced presentation feature only.
+ *
+ * @function Spring.StartFrameStream
+ * @param options table {address=string, port=integer?, width=integer?, height=integer?, fps=number?}
+ * @return boolean started
+ */
+int LuaUnsyncedCtrl::StartFrameStream(lua_State* L)
+{
+	if (!lua_istable(L, 1))
+		return luaL_error(L, "[%s] expected options table", __func__);
+
+	std::string address;
+	int port = 9001;
+	int width = 640;
+	int height = 360;
+	float fps = 20.0f;
+
+	lua_getfield(L, 1, "address");
+	if (lua_isstring(L, -1))
+		address = lua_tostring(L, -1);
+	lua_pop(L, 1);
+
+	lua_getfield(L, 1, "port");
+	if (lua_isnumber(L, -1))
+		port = lua_toint(L, -1);
+	lua_pop(L, 1);
+
+	lua_getfield(L, 1, "width");
+	if (lua_isnumber(L, -1))
+		width = lua_toint(L, -1);
+	lua_pop(L, 1);
+
+	lua_getfield(L, 1, "height");
+	if (lua_isnumber(L, -1))
+		height = lua_toint(L, -1);
+	lua_pop(L, 1);
+
+	lua_getfield(L, 1, "fps");
+	if (lua_isnumber(L, -1))
+		fps = lua_tofloat(L, -1);
+	lua_pop(L, 1);
+
+	if (address.empty() || port < 1 || port > 65535)
+		return luaL_error(L, "[%s] invalid address or port", __func__);
+
+	const bool started = CFrameStream::GetInstance().Start(
+		address,
+		static_cast<std::uint16_t>(port),
+		width,
+		height,
+		fps
+	);
+
+	lua_pushboolean(L, started);
+	return 1;
+}
+
+
+/*** Stops the active framebuffer stream, if any.
+ *
+ * @function Spring.StopFrameStream
+ * @return nil
+ */
+int LuaUnsyncedCtrl::StopFrameStream(lua_State* L)
+{
+	CFrameStream::GetInstance().Stop();
+	return 0;
+}
+
+
+/*** Returns whether the local-network framebuffer stream is active.
+ *
+ * @function Spring.IsFrameStreamActive
+ * @return boolean active
+ */
+int LuaUnsyncedCtrl::IsFrameStreamActive(lua_State* L)
+{
+	lua_pushboolean(L, CFrameStream::GetInstance().IsActive());
+	return 1;
 }
 
 
