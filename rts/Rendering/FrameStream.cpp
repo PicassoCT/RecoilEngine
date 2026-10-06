@@ -45,7 +45,7 @@ struct QOIPixel {
 	std::uint8_t r = 0;
 	std::uint8_t g = 0;
 	std::uint8_t b = 0;
-	std::uint8_t a = 255;
+	std::uint8_t a = 0;
 
 	bool operator==(const QOIPixel& p) const {
 		return r == p.r && g == p.g && b == p.b && a == p.a;
